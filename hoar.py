@@ -36,10 +36,12 @@ pauseb = ManageButton(root, "Пауза", row=3, column=3, cspan=2, sticky=None)
 class OperationalArray:
     def __init__(self, arr, bx, by, ex, ey):
         self.build(arr, bx, by, ex, ey)
-        self.divide(arr, bx, by, ex, ey)
+        self.merged = self.divide(arr, bx, by, ex, ey)
     
     def build(self, arr, bx, by, ex, ey):
         pivot = 'orange'
+        if len(arr) < 2:
+            return
         for i in arr:
             c.create_rectangle(bx, by, ex, ey, outline=pivot)
             c.create_text(bx+15, by+15, text=i, font="Verdana 14")
@@ -65,8 +67,8 @@ class OperationalArray:
 
     def divide(self, arr, bx, by, ex, ey):
         # отрисовать опорный элемент
-        if len(arr) < 1:
-            return
+        if len(arr) < 2:
+            return arr
         c.create_text(bx+90, by+60, text=arr[0], font="Verdana 14")
 
         less = [i for i in arr[1:] if i <= arr[0]]
@@ -96,11 +98,9 @@ class OperationalArray:
             bx += 30
             ex += 30
 
-        OperationalArray(less, bx-300, by+60, ex-300, ey+60)
-        OperationalArray(greater, bx+50, by+60, ex+50, ey+60)
         
-
-
+        return OperationalArray(less, bx-300, by+60, ex-300, ey+60).merged + [arr[0]] + OperationalArray(greater, bx+50, by+60, ex+50, ey+60).merged
+        
 
 
 # теперь на холсте нужно нарисовать массив с данными
@@ -113,10 +113,10 @@ by = 10
 ex = 390
 ey = 40
 
-sortArray = [4, 1, 6, 3, 5, 2]
+sortArray = [4, 6, 1, 5, 3, 2]
 
 first = OperationalArray(sortArray, bx, by, ex, ey)
-first.returnArrow([1, 2, 3, 4, 5, 6], 550, 25, 580, 25)
+first.returnArrow(first.merged, 550, 25, 580, 25)
 
 # теперь нужно сделать отступ вниз и отобразить там опорный элемент
 # слева от него отобразить массив с меньшими значениями а справа - с большими
